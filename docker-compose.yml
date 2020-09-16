@@ -1,0 +1,22 @@
+services:
+  traefik:
+    image: traefik
+    command:
+      - --providers.docker.exposedByDefault=false
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 8000:80
+  php:
+    image: php
+    labels:
+      - "traefik.http.routers.php.rule=PathPrefix(`/`)"
+      - "traefik.enable=true"
+    volumes:
+      - $PWD:/var/www
+    command: /var/www/artisan serve --host 0.0.0.0
+    expose:
+      - 8000
+  redis:
+    image: redis
+version: '3.0'
